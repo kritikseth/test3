@@ -20,11 +20,9 @@ torch.cuda.manual_seed(0)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-
 # Tokenize the input
 def tokenize_function(examples):
     return tokenizer(examples["text"], padding="max_length", truncation=True)
-
 
 # Core training function
 def do_train(args, model, train_dataloader, save_dir="./out"):
@@ -64,7 +62,6 @@ def do_train(args, model, train_dataloader, save_dir="./out"):
     model.save_pretrained(save_dir)
 
     return
-
 
 # Core evaluation function
 def do_eval(eval_dataloader, output_dir, out_file):
@@ -123,6 +120,7 @@ def create_augmented_dataloader(args, dataset):
     # train_input_ids = torch.cat([train_dataset_tokenized['input_ids'], augmented_dataset_tokenized['input_ids']], dim=0)
     # train_attention_mask = torch.cat([train_dataset_tokenized['attention_mask'], augmented_dataset_tokenized['attention_mask']], dim=0)
     # train_labels = torch.cat([train_dataset_tokenized['labels'], augmented_dataset_tokenized['labels']], dim=0)
+    
 
     combined_dataset = ConcatDataset([train_dataset_tokenized, augmented_dataset_tokenized])
     train_dataloader = DataLoader(combined_dataset, batch_size=args.batch_size, shuffle=True)

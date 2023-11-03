@@ -15,6 +15,8 @@ from nltk import word_tokenize
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 import nltk
 nltk.download('stopwords')
+from nltk.corpus import stopwords
+stopwords
 
 random.seed(0)
 
@@ -70,7 +72,7 @@ def replace_words_with_synonyms(sentence):
     replacements_made = 0
 
     for word in words:
-        if replacements_made < num_replacements and len(word) > 3:
+        if replacements_made < num_replacements and word not in stopwords:
             if random.random() <= 0.4:
                 synonyms = get_synonyms(word)
                 if synonyms:
@@ -164,7 +166,7 @@ def custom_transform(example):
         transformed_sentence = add_typing_error(transformed_sentence)
 
         # Apply additional transformations with a 75% probability
-        if random.random() <= 0.75:
+        if random.random() <= 0.15:
             # Randomly choose which additional transformations to apply
             additional_transformations = [replace_preposition, replace_or_remove_articles, remove_be_forms]
             selected_transformations = random.sample(additional_transformations, random.randint(1, 3))
