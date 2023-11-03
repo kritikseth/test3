@@ -103,9 +103,15 @@ def create_augmented_dataloader(args, dataset):
     # dataloader will be for the original training split augmented with 5k random transformed examples from the training set.
     # You may find it helpful to see how the dataloader was created at other place in this code.
 
-    raise NotImplementedError
 
     ##### YOUR CODE ENDS HERE ######
+    augmented_training_data = []
+
+    for example in dataset["train"]:
+        augmented_example = custom_transform(example)
+        augmented_training_data.append(augmented_example)
+    combined_training_data = dataset["train"] + augmented_training_data
+    train_dataloader = DataLoader(combined_training_data, batch_size=args.batch_size)
 
     return train_dataloader
 
