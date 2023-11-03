@@ -1,7 +1,7 @@
 import datasets
 from datasets import load_dataset
 from transformers import AutoTokenizer
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader, ConcatDataset
 from transformers import AutoModelForSequenceClassification
 from torch.optim import AdamW
 from transformers import get_scheduler
@@ -120,12 +120,12 @@ def create_augmented_dataloader(args, dataset):
     augmented_dataset_tokenized = augmented_dataset_tokenized.rename_column("label", "labels")
     augmented_dataset_tokenized.set_format("torch")
 
-    train_input_ids = torch.cat([train_dataset_tokenized['input_ids'], augmented_dataset_tokenized['input_ids']], dim=0)
-    train_attention_mask = torch.cat([train_dataset_tokenized['attention_mask'], augmented_dataset_tokenized['attention_mask']], dim=0)
-    train_labels = torch.cat([train_dataset_tokenized['labels'], augmented_dataset_tokenized['labels']], dim=0)
+    # train_input_ids = torch.cat([train_dataset_tokenized['input_ids'], augmented_dataset_tokenized['input_ids']], dim=0)
+    # train_attention_mask = torch.cat([train_dataset_tokenized['attention_mask'], augmented_dataset_tokenized['attention_mask']], dim=0)
+    # train_labels = torch.cat([train_dataset_tokenized['labels'], augmented_dataset_tokenized['labels']], dim=0)
 
-    train_dataset = TensorDataset(train_input_ids, train_attention_mask, train_labels)
-    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
+    combined_dataset = ConcatDataset([train_dataset_tokenized, augmented_dataset_tokenized])
+    train_dataloader = DataLoader(combined_dataset, batch_size=args.batch_size, shuffle=True)
 
     return train_dataloader
 
