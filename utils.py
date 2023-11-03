@@ -48,7 +48,7 @@ def add_typing_error(sentence):
         'y': ['t', 'u'], 'z': ['x', 's']
     }
 
-    words = sentence.split()
+    words = sentence.lower().split()
     transformed_words = []
 
     for word in words:
