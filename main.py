@@ -1,7 +1,7 @@
 import datasets
 from datasets import load_dataset
 from transformers import AutoTokenizer
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, TensorDataset
 from transformers import AutoModelForSequenceClassification
 from torch.optim import AdamW
 from transformers import get_scheduler
@@ -103,15 +103,29 @@ def create_augmented_dataloader(args, dataset):
     # dataloader will be for the original training split augmented with 5k random transformed examples from the training set.
     # You may find it helpful to see how the dataloader was created at other place in this code.
 
-
     ##### YOUR CODE ENDS HERE ######
-    augmented_training_data = []
+    train_dataset = dataset["train"]
+    train_tokenized_dataset = train_dataset.map(tokenize_function, batched=True, load_from_cache_file=False)
+    train_tokenized_dataset = train_tokenized_dataset.remove_columns(["text"])
+    train_tokenized_dataset = train_tokenized_dataset.rename_column("label", "labels")
+    train_tokenized_dataset.set_format("torch")
 
-    for example in dataset["train"]:
-        augmented_example = custom_transform(example)
-        augmented_training_data.append(augmented_example)
-    combined_training_data = dataset["train"] + augmented_training_data
-    train_dataloader = DataLoader(combined_training_data, batch_size=args.batch_size)
+    train_dataloader = DataLoader(train_tokenized_dataset, batch_size=args.batch_size, shuffle=True)
+
+    num_augmented_examples = 5000
+    augmented_dataset = train_dataset.shuffle(seed=42).select(range(num_augmented_examples))
+    augmented_dataset = augmented_dataset.map(custom_transform, load_from_cache_file=False)
+    augmented_dataset_tokenized = augmented_dataset.map(tokenize_function, batched=True, load_from_cache_file=False)
+    augmented_dataset_tokenized = augmented_dataset_tokenized.remove_columns(["text"])
+    augmented_dataset_tokenized = augmented_dataset_tokenized.rename_column("label", "labels")
+    augmented_dataset_tokenized.set_format("torch")
+
+    train_input_ids = torch.cat([train_tokenized_dataset['input_ids'], augmented_dataset_tokenized['input_ids']], dim=0)
+    train_attention_mask = torch.cat([train_tokenized_dataset['attention_mask'], augmented_dataset_tokenized['attention_mask']], dim=0)
+    train_labels = torch.cat([train_tokenized_dataset['labels'], augmented_dataset_tokenized['labels']], dim=0)
+
+    train_dataset = TensorDataset(train_input_ids, train_attention_mask, train_labels)
+    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
 
     return train_dataloader
 
