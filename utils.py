@@ -41,8 +41,8 @@ def add_typing_error(sentence):
     key_neighbors = {
         'a': ['q', 's'], 'b': ['v', 'g'], 'c': ['x', 'd'], 'd': ['s', 'f'],
         'e': ['w', 'r'], 'f': ['d', 'g'], 'g': ['f', 'h'], 'h': ['g', 'j'],
-        'i': ['u', 'o'], 'j': ['h', 'k'], 'k': ['j', 'l'], 'l': ['k', ';'],
-        'm': ['n', ','], 'n': ['b', 'm'], 'o': ['i', 'p'], 'p': ['o', '['],
+        'i': ['u', 'o'], 'j': ['h', 'k'], 'k': ['j', 'l'], 'l': ['k', 'o'],
+        'm': ['n', ','], 'n': ['b', 'm'], 'o': ['i', 'p'], 'p': ['o', 'l'],
         'q': ['a', 'w'], 'r': ['e', 't'], 's': ['a', 'd'], 't': ['r', 'y'],
         'u': ['y', 'i'], 'v': ['c', 'b'], 'w': ['q', 'e'], 'x': ['z', 'c'],
         'y': ['t', 'u'], 'z': ['x', 's']
@@ -52,7 +52,7 @@ def add_typing_error(sentence):
     transformed_words = []
 
     for word in words:
-        if random.random() <= 0.3 and len(word) > 2:
+        if random.random() <= 0.1 and len(word) > 2 and word not in stopwords:
             for _ in range(random.randint(1, 2)):
                 index = random.randint(0, len(word) - 1)
                 original_letter = word[index]
@@ -65,7 +65,7 @@ def add_typing_error(sentence):
     return " ".join(transformed_words)
 
 def replace_words_with_synonyms(sentence):
-    words = sentence.split()
+    words = sentence.split('. ')
     transformed_words = []
 
     num_replacements = random.randint(1, 2)
@@ -73,7 +73,7 @@ def replace_words_with_synonyms(sentence):
 
     for word in words:
         if replacements_made < num_replacements and word not in stopwords:
-            if random.random() <= 0.4:
+            if random.random() <= 0.3:
                 synonyms = get_synonyms(word)
                 if synonyms:
                     transformed_words.append(random.choice(synonyms))
@@ -166,7 +166,7 @@ def custom_transform(example):
         transformed_sentence = add_typing_error(transformed_sentence)
 
         # Apply additional transformations with a 75% probability
-        if random.random() <= 0.15:
+        if random.random() <= 0.60:
             # Randomly choose which additional transformations to apply
             additional_transformations = [replace_preposition, replace_or_remove_articles, remove_be_forms]
             selected_transformations = random.sample(additional_transformations, random.randint(1, 3))
