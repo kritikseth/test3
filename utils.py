@@ -16,7 +16,7 @@ from nltk.tokenize.treebank import TreebankWordDetokenizer
 import nltk
 nltk.download('stopwords')
 from nltk.corpus import stopwords
-stopwords
+stopwords = set(stopwords.words('english'))
 
 random.seed(0)
 
