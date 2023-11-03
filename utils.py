@@ -72,8 +72,6 @@ def replace_words_with_synonyms(sentence):
     replacements_made = 0
 
     for word in words:
-        print(word)
-        print(words)
         if replacements_made < num_replacements and word not in stopwords:
             if random.random() <= 0.3:
                 synonyms = get_synonyms(word)
