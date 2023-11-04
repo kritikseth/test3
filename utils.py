@@ -52,7 +52,7 @@ def add_typing_error(sentence):
     transformed_words = []
 
     for word in words:
-        if random.random() <= 0.4 and len(word) > 2 and word not in stopwords:
+        if random.random() <= 0.1 and len(word) > 2 and word not in stopwords:
             for _ in range(random.randint(1, 2)):
                 index = random.randint(0, len(word) - 1)
                 original_letter = word[index]
@@ -166,7 +166,7 @@ def custom_transform(example):
         transformed_sentence = add_typing_error(transformed_sentence)
 
         # Apply additional transformations with a 75% probability
-        if random.random() <= 0.10:
+        if random.random() <= 0.50:
             # Randomly choose which additional transformations to apply
             additional_transformations = [replace_preposition, replace_or_remove_articles, remove_be_forms]
             selected_transformations = random.sample(additional_transformations, random.randint(3, 3))
