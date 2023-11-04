@@ -99,15 +99,13 @@ def create_augmented_dataloader(args, dataset):
     # Here, 'dataset' is the original dataset. You should return a dataloader called 'train_dataloader' -- this
     # dataloader will be for the original training split augmented with 5k random transformed examples from the training set.
     # You may find it helpful to see how the dataloader was created at other place in this code.
-
-    ##### YOUR CODE ENDS HERE ######
     train_dataset = dataset["train"]
     train_dataset_tokenized = train_dataset.map(tokenize_function, batched=True, load_from_cache_file=False)
     train_dataset_tokenized = train_dataset_tokenized.remove_columns(["text"])
     train_dataset_tokenized = train_dataset_tokenized.rename_column("label", "labels")
     train_dataset_tokenized.set_format("torch")
 
-    train_dataloader = DataLoader(train_dataset_tokenized, batch_size=args.batch_size, shuffle=True)
+    # train_dataloader = DataLoader(train_dataset_tokenized, batch_size=args.batch_size, shuffle=True)
 
     num_augmented_examples = 5000
     augmented_dataset = train_dataset.shuffle(seed=42).select(range(num_augmented_examples))
@@ -120,10 +118,11 @@ def create_augmented_dataloader(args, dataset):
     # train_input_ids = torch.cat([train_dataset_tokenized['input_ids'], augmented_dataset_tokenized['input_ids']], dim=0)
     # train_attention_mask = torch.cat([train_dataset_tokenized['attention_mask'], augmented_dataset_tokenized['attention_mask']], dim=0)
     # train_labels = torch.cat([train_dataset_tokenized['labels'], augmented_dataset_tokenized['labels']], dim=0)
-    
 
     combined_dataset = ConcatDataset([train_dataset_tokenized, augmented_dataset_tokenized])
     train_dataloader = DataLoader(combined_dataset, batch_size=args.batch_size, shuffle=True)
+
+    ##### YOUR CODE ENDS HERE ######
 
     return train_dataloader
 
