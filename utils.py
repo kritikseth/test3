@@ -48,7 +48,7 @@ def add_typing_error(sentence):
         'y': ['t', 'u'], 'z': ['x', 's']
     }
 
-    words = sentence.lower().split()
+    words = sentence.split()
     transformed_words = []
 
     for word in words:
@@ -166,10 +166,10 @@ def custom_transform(example):
         transformed_sentence = add_typing_error(transformed_sentence)
 
         # Apply additional transformations with a 75% probability
-        if random.random() <= 0.60:
+        if random.random() <= 0.75:
             # Randomly choose which additional transformations to apply
             additional_transformations = [replace_preposition, replace_or_remove_articles, remove_be_forms]
-            selected_transformations = random.sample(additional_transformations, random.randint(1, 3))
+            selected_transformations = random.sample(additional_transformations, random.randint(3, 3))
 
             for transformation in selected_transformations:
                 transformed_sentence = transformation(transformed_sentence)
