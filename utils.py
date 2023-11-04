@@ -88,11 +88,11 @@ def replace_words_with_synonyms(sentence):
     return " ".join(transformed_words)
 
 def get_synonyms(word):
-    synonyms = set()
+    synonyms = []
     for syn in wordnet.synsets(word):
         for lemma in syn.lemmas():
             synonyms.append(lemma.name())
-    return list(synonyms)
+    return list(set(synonyms))
 
 def replace_preposition(sentence):
 
